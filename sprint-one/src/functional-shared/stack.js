@@ -17,12 +17,10 @@ var stackMethods = {
   pop: function () {
     let response = this[this.index - 1];
     delete this[this.index - 1];
-    this.index--;
+    this.index > 0 ? this.index-- : this.index *= 1;
     return response;
   },
   size: function () {
-    return this.index >= 0 ? this.index : 0;
+    return this.index;
   }
 };
-
-

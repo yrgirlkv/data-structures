@@ -12,11 +12,11 @@ Stack.prototype.push = function (value) {
 Stack.prototype.pop = function (value) {
   let response = this[this.index - 1];
   delete this[this.index - 1];
-  this.index--;
+  this.index > 0 ? this.index-- : this.index *= 1;
   return response;
 
 };
 
 Stack.prototype.size = function () {
-  return this.index > 0 ? this.index : 0;
+  return this.index;
 };
