@@ -27,4 +27,7 @@ var Queue = function() {
   };
 
   return someInstance;
+  //a somewhat silly feature of this particular implmenetation of queue
+  //is that the actual values of head and tail, and the indexes, will become stupidly huge if you do a large number of operations on the que
+  //because i can't figure out how to reassign the indexes in an efficient way
 };
