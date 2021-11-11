@@ -23,11 +23,11 @@ var Queue = function() {
   };
 
   someInstance.size = function() {
-    return storage.tail - storage.head >= 0 ? storage.tail - storage.head : 0;
+    return storage.tail > storage.head ? storage.tail - storage.head : 0;
   };
 
   return someInstance;
-  //a somewhat silly feature of this particular implmenetation of queue
+  //a somewhat silly feature of the implmenetation of queue given here
   //is that the actual values of head and tail, and the indexes, will become stupidly huge if you do a large number of operations on the que
   //because i can't figure out how to reassign the indexes in an efficient way
 };
