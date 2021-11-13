@@ -3,36 +3,63 @@
 var HashTable = function() {
   this._limit = 8;
   this._storage = LimitedArray(this._limit);
-
+  this._filledSlots = 0;
 };
 
+HashTable.prototype.alterSize = function (newSize) {
+  this._limit *= newSize;
+  this._oldStorage = this._storage;
+  this._storage = LimitedArray(this._limit);
+  this._filledSlots = 0;
+  this._oldStorage.each( (function(value, index, collection) {
+    if (value !== undefined) {
+      for (let i of value) {
+        this.insert(i[0], i[1]);
+      }
+    }
+  }).bind(this));
+  delete this._oldStorage;
+
+  // trying with a ARROW FUNCTION (es6 allows to use arrow function where `this` scope is bound to the instance the function is called in) -- works
+  // this._oldStorage.each( (value, index, collection) => {
+  //   if (value !== undefined) {
+  //     for (let i of value) {
+  //       this.insert(i[0], i[1]);
+  //     }
+  //   }
+  // });
+};
+
+
 HashTable.prototype.insert = function(k, v) {
-  //hash the key into an index
   var index = getIndexBelowMaxForKey(k, this._limit);
-  //if there is no bucket
+  this._filledSlots++;
   if (this._storage.get(index) === undefined) {
     this._storage.set(index, []);
   }
-  //take the index and find it in storage
   let bucket = this._storage.get(index);
   let isFound = false;
-  //if the key already exists, update the value
   for (let i of bucket) {
     if (k === i[0]) {
       isFound = true;
       i[1] = v;
     }
   }
-  //if the key doesn't exist, push it to the array at the givne index
   if (!isFound) {
     this._storage.get(index).push([k, v]);
   }
-  //push the [key, value] array into the bucket at the hashed index
+  if (this._filledSlots > (0.75 * this._limit)) {
+    this.alterSize(2);
+
+  }
 };
 
 HashTable.prototype.retrieve = function(k) {
   var index = getIndexBelowMaxForKey(k, this._limit);
   let bucket = this._storage.get(index);
+  if (bucket === undefined) {
+    return undefined;
+  }
   for (let i of bucket) {
     if (k === i[0]) {
       return i[1];
@@ -43,21 +70,23 @@ HashTable.prototype.retrieve = function(k) {
 
 HashTable.prototype.remove = function(k) {
   var index = getIndexBelowMaxForKey(k, this._limit);
-  // get the bucket
+  this._filledSlots--;
   let bucket = this._storage.get(index);
-  //loop through the bucket
   for (let i = 0; i < bucket.length; i++) {
-    //splice out the value (tuple) at the index
     if (k === bucket[i][0]) {
       bucket.splice(i, 1);
     }
   }
+  if (this._filledSlots < 0.25 * this._limit) {
+    this.alterSize(0.5);
+  }
 };
-
-
 
 /*
  * Complexity: What is the time complexity of the above functions?
  */
+
+//ADVANCED CONTENT!!!!!!!!!!
+
 
 
