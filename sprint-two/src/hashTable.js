@@ -14,15 +14,16 @@ HashTable.prototype.insert = function(k, v) {
     this._storage.set(index, []);
   }
   //take the index and find it in storage
-  //if the key already exists
   let bucket = this._storage.get(index);
   let isFound = false;
+  //if the key already exists, update the value
   for (let i of bucket) {
     if (k === i[0]) {
       isFound = true;
       i[1] = v;
     }
   }
+  //if the key doesn't exist, push it to the array at the givne index
   if (!isFound) {
     this._storage.get(index).push([k, v]);
   }
@@ -42,6 +43,15 @@ HashTable.prototype.retrieve = function(k) {
 
 HashTable.prototype.remove = function(k) {
   var index = getIndexBelowMaxForKey(k, this._limit);
+  // get the bucket
+  let bucket = this._storage.get(index);
+  //loop through the bucket
+  for (let i = 0; i < bucket.length; i++) {
+    //splice out the value (tuple) at the index
+    if (k === bucket[i][0]) {
+      bucket.splice(i, 1);
+    }
+  }
 };
 
 
